@@ -7,11 +7,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.FloatArray;
+import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 
 import com.openthid.librehero.components.SelfRenderedComponent;
 
@@ -22,9 +18,9 @@ public class RenderSystem extends EntitySystem {
 	private int screenX;
 	private int screenY;
 
-	private Batch batch;
+	private PolygonSpriteBatch batch;
 
-	public RenderSystem(Batch batch, int screenX, int screenY) {
+	public RenderSystem(PolygonSpriteBatch batch, int screenX, int screenY) {
 		this.batch = batch;
 		this.screenX = screenX;
 		this.screenY = screenY;
@@ -46,31 +42,8 @@ public class RenderSystem extends EntitySystem {
 		for (int i = 0; i < selfRenderedEntities.size(); i++) {
 			Entity entity = selfRenderedEntities.get(i);
 			SelfRenderedComponent selfRenderedComponent = entity.getComponent(SelfRenderedComponent.class);
-			selfRenderedComponent.renderCallback.accept(this::drawCallback);
+			selfRenderedComponent.renderCallback.accept(batch);
 		}
 		batch.end();
 	}
-
-	/**
-	 * Passed to {@link SelfRenderedComponent}s for them to draw to
-	 */
-	private void drawCallback(Texture texture, FloatArray floats, Vector2 vec) {
-		float rotationA = floats.items[4];
-		float rotationB = floats.items[5];
-		//batch.draw(texture, x, y, originX, originY, width, height, scaleX, scaleY, rotation, srcX, srcY, srcWidth, srcHeight, flipX, flipY);
-		batch.draw(texture,
-				floats.items[0] + vec.x*MathUtils.cosDeg(rotationB) - vec.y*MathUtils.sinDeg(rotationB) - floats.items[2]/2,
-				floats.items[1] + vec.y*MathUtils.cosDeg(rotationB) + vec.x*MathUtils.sinDeg(rotationB) - floats.items[3]/2,
-				floats.items[2]/2,
-				floats.items[3]/2,
-				floats.items[2],
-				floats.items[3],
-				1,1, //No scaling
-				rotationA + rotationB,
-				0,0,
-				texture.getWidth(),
-				texture.getHeight(),
-				false,false
-			);
-	};
 }

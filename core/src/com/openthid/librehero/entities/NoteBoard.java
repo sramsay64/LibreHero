@@ -1,12 +1,9 @@
 package com.openthid.librehero.entities;
 
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.FloatArray;
+import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 
 import com.openthid.librehero.components.SelfRenderedComponent;
-import com.openthid.util.TriConsumer;
 
 public class NoteBoard {
 
@@ -18,11 +15,11 @@ public class NoteBoard {
 		entity = new Entity();
 		entity.add(selfRenderedComponent);
 		
-		sprite = new NoteBoardSprite(xPos, yPos, xSize, ySize, skewFactor);
+		sprite = new NoteBoardSprite(xPos, yPos, xSize, ySize, skewFactor, this);
 	}
 
-	private void draw(TriConsumer<Texture, FloatArray, Vector2> consumer) {
-		sprite.draw(consumer);
+	private void draw(PolygonSpriteBatch batch) {
+		sprite.draw(batch);
 	}
 
 	public Entity getEntity() {

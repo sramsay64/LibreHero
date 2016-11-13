@@ -2,7 +2,8 @@ package com.openthid.librehero.screens;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
+
 import com.openthid.librehero.GdxGame;
 
 public class BaseScreen extends ScreenAdapter implements InputProcessor {
@@ -16,7 +17,7 @@ public class BaseScreen extends ScreenAdapter implements InputProcessor {
 		return game;
 	}
 
-	public SpriteBatch getBatch() {
+	public PolygonSpriteBatch getBatch() {
 		return getGame().getBatch();
 	}
 

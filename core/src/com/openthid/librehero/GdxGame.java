@@ -1,14 +1,15 @@
 package com.openthid.librehero;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
+
 import com.kotcrab.vis.ui.VisUI;
 import com.openthid.librehero.screens.FieldScreen;
 import com.openthid.librehero.screens.HomeScreen;
 import com.openthid.librehero.screens.TitleScreen;
 
 public class GdxGame extends Game {
-	private SpriteBatch batch;
+	private PolygonSpriteBatch batch;
 
 	private int width;
 	private int height;
@@ -23,12 +24,12 @@ public class GdxGame extends Game {
 	}
 
 	public void create() {
-		batch = new SpriteBatch();
+		batch = new PolygonSpriteBatch();
 		VisUI.load();
 		setScreen(getTitleScreen());
 	}
 
-	public SpriteBatch getBatch() {
+	public PolygonSpriteBatch getBatch() {
 		return batch;
 	}
 
