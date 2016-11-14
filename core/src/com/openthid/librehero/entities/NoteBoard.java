@@ -10,7 +10,11 @@ public class NoteBoard {
 	private Entity entity;
 	private NoteBoardSprite sprite;
 
-	public NoteBoard(int xPos, int yPos, int xSize, int ySize, float skewFactor) {
+	private int columns;
+
+	public NoteBoard(int xPos, int yPos, int xSize, int ySize, float skewFactor, int columns) {
+		this.columns = columns;
+		
 		SelfRenderedComponent selfRenderedComponent = new SelfRenderedComponent(this::draw);
 		entity = new Entity();
 		entity.add(selfRenderedComponent);
@@ -24,5 +28,9 @@ public class NoteBoard {
 
 	public Entity getEntity() {
 		return entity;
+	}
+
+	public int getColumns() {
+		return columns;
 	}
 }

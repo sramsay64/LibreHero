@@ -26,7 +26,8 @@ public class GdxGame extends Game {
 	public void create() {
 		batch = new PolygonSpriteBatch();
 		VisUI.load();
-		setScreen(getTitleScreen());
+//		setScreen(getTitleScreen());
+		setScreen(getFieldScreen()); // TEMP
 	}
 
 	public PolygonSpriteBatch getBatch() {

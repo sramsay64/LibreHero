@@ -20,6 +20,7 @@ import com.openthid.librehero.systems.RenderSystem;
  * Renders the game field
  */
 public class FieldScreen extends BaseScreen {
+	public static float fff; // TEMP
 
 	private HashMap<Integer, Boolean> keyCache;
 
@@ -49,12 +50,12 @@ public class FieldScreen extends BaseScreen {
 		zoomSlider.setSize(50, 500);
 		zoomSlider.addListener(e -> {
 			float amount = zoomSlider.getValue();
-			System.out.println(amount);
+			fff = amount/100;
 			return true;
 		});
 		stage.addActor(zoomSlider);
 		
-		noteBoard = new NoteBoard(400, 100, 500, 500, 0.5f);
+		noteBoard = new NoteBoard(400, 100, 500, 500, 0.3f, 5);
 		engine.addEntity(noteBoard.getEntity());
 	}
 
@@ -100,7 +101,7 @@ public class FieldScreen extends BaseScreen {
 
 	@Override
 	public boolean scrolled(int amount) {
-		zoomSlider.setValue(zoomSlider.getValue() + amount);
+		zoomSlider.setValue(zoomSlider.getValue() + amount*5);
 		return true;
 	}
 
