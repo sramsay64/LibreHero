@@ -1,9 +1,6 @@
 package com.openthid.librehero.entities;
 
 import java.util.HashMap;
-import java.util.function.Function;
-import java.util.function.IntFunction;
-import java.util.function.IntUnaryOperator;
 
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 
+import com.openthid.librehero.entities.SongData.Note;
 import com.openthid.librehero.screens.FieldScreen;
 
 public class NoteBoardSprite {
@@ -26,22 +24,24 @@ public class NoteBoardSprite {
 	private int ySize;
 	private float skewFactor;
 
-	int columns;
-	float width;
-	float unit;
+	int columns; // Number of columns that notes can
+	float width; // Width of each line separating the columns and on the edges
+	float unit; // The width of each columns
 
 	private NoteBoard board;
+	private Song song;
 
 	private TextureRegion whiteDot;
 	private PolygonSprite[] boardSprites;
 
-	public NoteBoardSprite(int xPos, int yPos, int xSize, int ySize, float skewFactor, NoteBoard board) {
+	public NoteBoardSprite(int xPos, int yPos, int xSize, int ySize, float skewFactor, NoteBoard board, Song song) {
 		this.xPos = xPos;
 		this.yPos = yPos;
 		this.xSize = xSize;
 		this.ySize = ySize;
 		this.skewFactor = skewFactor;
 		this.board = board;
+		this.song = song;
 		
 		columns = board.getColumns();
 		width = 10;
@@ -69,7 +69,7 @@ public class NoteBoardSprite {
 		
 		sprites[columns+2] = rect(0, 0, xSize, width);
 		sprites[columns+2].setColor(0.1f, 0, 1, 1);
-		sprites[columns+3] = rect(0, unit, xSize, unit+width);
+		sprites[columns+3] = rect(0, unit+width, xSize, unit+width*2);
 		sprites[columns+3].setColor(0.1f, 0, 1, 1);
 		
 		return sprites;
@@ -83,23 +83,53 @@ public class NoteBoardSprite {
 			boardSprites[i].draw(batch);
 		}
 		batch.draw(getKeyTexture('A'), 40, 40);
+
+//		IntFunction<Float> notePos = i -> (i+0.5f)*unit+(i+1)*width; // TODO Externalize
 		
 		Texture a = getKeyTexture('A');
-//		drawTexture(batch, a, FieldScreen.fff*xSize, (ySize-a.getHeight())/2);
-//		drawTexture(batch, a, FieldScreen.fff*xSize, (ySize+10+a.getHeight())/2);
 		
-		IntFunction<Float> notePos = i -> (i+0.5f)*unit+(i+1)*width;
+//		for (int i = 0; i < board.getKeys().length; i++) {
+//			Texture texture = getKeyTexture(board.getKeys()[i]);
+//			drawTexture(batch, texture, notePos.apply(i), 0, 0.8f);
+//		}
 		
-		drawTexture(batch, a, notePos.apply(0), 0*FieldScreen.fff*ySize+70*4, 0.8f);
-		drawTexture(batch, a, notePos.apply(1), 0*FieldScreen.fff*ySize+70*3, 0.8f);
-		drawTexture(batch, a, notePos.apply(2), 0*FieldScreen.fff*ySize+70*2, 0.8f);
-		drawTexture(batch, a, notePos.apply(3), 0*FieldScreen.fff*ySize+70*7, 0.8f);
-		drawTexture(batch, a, notePos.apply(4), 0*FieldScreen.fff*ySize+70*1, 0.8f);
+//		drawTexture(batch, a, notePos.apply(0), 0*FieldScreen.fff*ySize+70*4, 0.8f);
+//		drawTexture(batch, a, notePos.apply(1), 0*FieldScreen.fff*ySize+70*3, 0.8f);
+//		drawTexture(batch, a, notePos.apply(2), 0*FieldScreen.fff*ySize+70*2, 0.8f);
+//		drawTexture(batch, a, notePos.apply(3), 0*FieldScreen.fff*ySize+70*7, 0.8f);
+//		drawTexture(batch, a, notePos.apply(4), 0*FieldScreen.fff*ySize+70*1, 0.8f);
+//		drawTexture(batch, a, notePos.apply(4), 0*FieldScreen.fff*ySize+70*2, 0.8f);
+//		drawTexture(batch, a, notePos.apply(4), 0*FieldScreen.fff*ySize+70*3, 0.8f);
+//		drawTexture(batch, a, notePos.apply(4), 0*FieldScreen.fff*ySize+70*4, 0.8f);
+//		drawTexture(batch, a, notePos.apply(4), 0*FieldScreen.fff*ySize+70*5, 0.8f);
+//		drawTexture(batch, a, notePos.apply(4), 0*FieldScreen.fff*ySize+70*6, 0.8f);
+		
+		for (int i = song.getCurrentNoteIndex(); i < song.getNotes().length; i++) {
+			Note note = song.getNotes()[i];
+			drawNote(batch, note);
+		}
 		
 		int y = (int) (FieldScreen.fff*ySize);
 		PolygonSprite lineSprite = rect(0, y, xSize, y+10);
 		lineSprite.setColor(0.8f, 0, 0.3f, 1);
 		lineSprite.draw(batch);
+	}
+
+	private float notePos(int pitch) {
+		return (pitch+0.5f)*unit+(pitch+1)*width;
+	}
+
+	private void drawNote(PolygonSpriteBatch batch, Note note) {
+		Texture texture = getKeyTexture(song.getKeys()[note.pitch]);
+		float beatsAway = (note.time-song.getCurrentTime());
+		float y = unit*beatsAway + unit/2 + width;
+		int pitch = note.pitch;
+		float x = (pitch+1)*(width+unit)  -0.5f*unit;
+//		drawTexture(batch, texture, x, y, 0.8f);
+		
+		PolygonSprite sprite = rect(x-2, y-2, x+2, y+2);
+		sprite.setColor(1, 1, 0, 1);
+		sprite.draw(batch);
 	}
 
 	private void drawTexture(PolygonSpriteBatch batch, Texture texture, float x, float y) {
@@ -112,7 +142,7 @@ public class NoteBoardSprite {
 		float height = projectWidth(texture.getHeight(), y);
 		batch.draw(
 				texture,
-				projectX(x-texture.getWidth()/2, y),	// x
+				projectX(x, y+texture.getHeight()/2),	// x
 				projectY(x-texture.getWidth()/2, y),	// y
 				width/2, height/2,	// originX, originY
 				width, height,	// width, height
@@ -184,9 +214,11 @@ public class NoteBoardSprite {
 	}
 
 	private Texture getKeyTexture(char key) {
+		if (Character.isLowerCase(key)) {
+			key = Character.toUpperCase(key);
+		}
 		if (!keyboardSprites.containsKey(key)) {
 			Texture texture = new Texture("Xelu_FREE_keyboard&controller_prompts_pack/Keyboard & Mouse/Light/Keyboard_White_" + key + ".png");
-//			Texture texture = new Texture("badlogic.jpg");
 			keyboardSprites.put(key, texture);
 		}
 		return keyboardSprites.get(key);

@@ -10,16 +10,20 @@ public class NoteBoard {
 	private Entity entity;
 	private NoteBoardSprite sprite;
 
-	private int columns;
+	private Song song;
 
-	public NoteBoard(int xPos, int yPos, int xSize, int ySize, float skewFactor, int columns) {
-		this.columns = columns;
+	public NoteBoard(int xPos, int yPos, int xSize, int ySize, float skewFactor, Song song) {
+		this.song = song;
 		
 		SelfRenderedComponent selfRenderedComponent = new SelfRenderedComponent(this::draw);
 		entity = new Entity();
 		entity.add(selfRenderedComponent);
 		
-		sprite = new NoteBoardSprite(xPos, yPos, xSize, ySize, skewFactor, this);
+		sprite = new NoteBoardSprite(xPos, yPos, xSize, ySize, skewFactor, this, song);
+	}
+
+	public char[] getKeys() {
+		return song.getKeys();
 	}
 
 	private void draw(PolygonSpriteBatch batch) {
@@ -31,6 +35,6 @@ public class NoteBoard {
 	}
 
 	public int getColumns() {
-		return columns;
+		return getKeys().length;
 	}
 }

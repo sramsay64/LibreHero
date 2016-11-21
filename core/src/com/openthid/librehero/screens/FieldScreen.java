@@ -14,6 +14,8 @@ import com.kotcrab.vis.ui.widget.VisSlider;
 
 import com.openthid.librehero.GdxGame;
 import com.openthid.librehero.entities.NoteBoard;
+import com.openthid.librehero.entities.Song;
+import com.openthid.librehero.entities.SongData;
 import com.openthid.librehero.systems.RenderSystem;
 
 /**
@@ -30,7 +32,9 @@ public class FieldScreen extends BaseScreen {
 
 	private Stage stage;
 	private ScalingViewport viewport;
-	
+
+	private Song song;
+
 	private VisSlider zoomSlider;
 	private NoteBoard noteBoard;
 
@@ -55,7 +59,14 @@ public class FieldScreen extends BaseScreen {
 		});
 		stage.addActor(zoomSlider);
 		
-		noteBoard = new NoteBoard(400, 100, 500, 500, 0.3f, 5);
+		song = new Song(SongData.fromArrays(
+				new int[]{	2,4,1,3,0,2,1,3,2,4,2,4,2,4,1, 1, 1, 2, 4, 4},
+				new float[]{0,0,1,1,2,2,3,3,4,4,5,5,6,6,8,9,10,12,13,14},
+				new char[]{'q','w','e','r','t'},
+				120
+			), 60);
+		
+		noteBoard = new NoteBoard(400, 100, 500, 500, 0.3f, song);
 		engine.addEntity(noteBoard.getEntity());
 	}
 
