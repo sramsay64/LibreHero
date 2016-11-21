@@ -86,7 +86,7 @@ public class NoteBoardSprite {
 
 //		IntFunction<Float> notePos = i -> (i+0.5f)*unit+(i+1)*width; // TODO Externalize
 		
-		Texture a = getKeyTexture('A');
+//		Texture a = getKeyTexture('A');
 		
 //		for (int i = 0; i < board.getKeys().length; i++) {
 //			Texture texture = getKeyTexture(board.getKeys()[i]);
@@ -104,15 +104,23 @@ public class NoteBoardSprite {
 //		drawTexture(batch, a, notePos.apply(4), 0*FieldScreen.fff*ySize+70*5, 0.8f);
 //		drawTexture(batch, a, notePos.apply(4), 0*FieldScreen.fff*ySize+70*6, 0.8f);
 		
-		for (int i = song.getCurrentNoteIndex(); i < song.getNotes().length; i++) {
-			Note note = song.getNotes()[i];
-			drawNote(batch, note);
+//		for (int i = song.getCurrentNoteIndex(); i < song.getNotes().length; i++) {
+//			Note note = song.getNotes()[i];
+//			drawNote(batch, note);
+//		}
+		
+		for (int i = 0; i < song.getKeys().length; i++) {
+			for (int j = 0; j < 9; j++) {
+				Note note = new Note(i, j);
+				drawNote(batch, note);
+			}
 		}
 		
-		int y = (int) (FieldScreen.fff*ySize);
-		PolygonSprite lineSprite = rect(0, y, xSize, y+10);
-		lineSprite.setColor(0.8f, 0, 0.3f, 1);
-		lineSprite.draw(batch);
+//		int y = (int) (FieldScreen.fff*ySize);
+//		PolygonSprite lineSprite = rect(0, y, xSize, y+10);
+//		lineSprite.setColor(0.8f, 0, 0.3f, 1);
+//		lineSprite.draw(batch);
+//		testMouseSprite(batch);
 	}
 
 	private float notePos(int pitch) {
@@ -125,11 +133,7 @@ public class NoteBoardSprite {
 		float y = unit*beatsAway + unit/2 + width;
 		int pitch = note.pitch;
 		float x = (pitch+1)*(width+unit)  -0.5f*unit;
-//		drawTexture(batch, texture, x, y, 0.8f);
-		
-		PolygonSprite sprite = rect(x-2, y-2, x+2, y+2);
-		sprite.setColor(1, 1, 0, 1);
-		sprite.draw(batch);
+		drawTexture(batch, texture, x, y, 0.8f);
 	}
 
 	private void drawTexture(PolygonSpriteBatch batch, Texture texture, float x, float y) {
@@ -140,16 +144,22 @@ public class NoteBoardSprite {
 		float angle = projectZeroAngle(x);
 		float width = projectWidth(texture.getWidth(), y);
 		float height = projectWidth(texture.getHeight(), y);
+		
+		float x2 = projectX(x, y);
+		float y2 = projectY(x, y);
 		batch.draw(
 				texture,
-				projectX(x, y+texture.getHeight()/2),	// x
-				projectY(x-texture.getWidth()/2, y),	// y
+				x2-width/2,	// x
+				y2-height/2,	// y
 				width/2, height/2,	// originX, originY
 				width, height,	// width, height
 				scale, scale, angle,	//scaleX, scaleY, rotation
 				0, 0, texture.getWidth(), texture.getHeight(),	// srcX, srcY, srcWidth, srcHeight
 				false, false	// flipX, flipY
 			);
+		PolygonSprite sprite2 = rect(x-2, y-2, x+2, y+2);
+		sprite2.setColor(0.3f, 1, 0, 1);
+		sprite2.draw(batch);
 	}
 
 	private PolygonSprite rect(float x1, float y1, float x2, float y2) {

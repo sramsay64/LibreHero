@@ -23,6 +23,9 @@ import com.openthid.librehero.systems.RenderSystem;
  */
 public class FieldScreen extends BaseScreen {
 	public static float fff; // TEMP
+	public static float fffx; // TEMP
+	public static float fffy; // TEMP
+	
 
 	private HashMap<Integer, Boolean> keyCache;
 
@@ -108,6 +111,13 @@ public class FieldScreen extends BaseScreen {
 			return false;
 		}
 		return keyCache.get(keycode);
+	}
+
+	@Override
+	public boolean mouseMoved(int screenX, int screenY) {
+		fffx = screenX;
+		fffy = 800 - screenY;
+		return true;
 	}
 
 	@Override
