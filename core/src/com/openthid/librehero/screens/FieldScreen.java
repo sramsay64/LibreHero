@@ -17,12 +17,15 @@ import com.openthid.librehero.entities.NoteBoard;
 import com.openthid.librehero.entities.Song;
 import com.openthid.librehero.entities.SongData;
 import com.openthid.librehero.systems.RenderSystem;
+import com.openthid.librehero.systems.UpdateSystem;
 
 /**
  * Renders the game field
  */
 public class FieldScreen extends BaseScreen {
 	public static float fff; // TEMP
+	public static float fff2; // TEMP
+	public static float fff3; // TEMP
 	public static float fffx; // TEMP
 	public static float fffy; // TEMP
 	
@@ -32,6 +35,7 @@ public class FieldScreen extends BaseScreen {
 	private Engine engine;
 
 	private RenderSystem renderSystem;
+	private UpdateSystem updateSystem;
 
 	private Stage stage;
 	private ScalingViewport viewport;
@@ -50,6 +54,9 @@ public class FieldScreen extends BaseScreen {
 		renderSystem = new RenderSystem(getBatch(), getWidth(), getHeight());
 		engine.addSystem(renderSystem);
 		
+		updateSystem = new UpdateSystem();
+		engine.addSystem(updateSystem);
+		
 		stage = new Stage(viewport, getBatch());
 		
 		zoomSlider = new VisSlider(0, 100, 0.1f, true);
@@ -66,11 +73,13 @@ public class FieldScreen extends BaseScreen {
 				new int[]{	2,4,1,3,0,2,1,3,2,4,2,4,2,4,1, 1, 1, 2, 4, 4},
 				new float[]{0,0,1,1,2,2,3,3,4,4,5,5,6,6,8,9,10,12,13,14},
 				new char[]{'q','w','e','r','t'},
+				new float[]{0,4,8,12,16},
 				120
 			), 60);
 		
 		noteBoard = new NoteBoard(400, 100, 500, 500, 0.3f, song);
 		engine.addEntity(noteBoard.getEntity());
+		engine.addEntity(song.getEntity());
 	}
 
 	@Override
@@ -117,6 +126,8 @@ public class FieldScreen extends BaseScreen {
 	public boolean mouseMoved(int screenX, int screenY) {
 		fffx = screenX;
 		fffy = 800 - screenY;
+		fff2 = fffx/1200;
+		fff3 = fffy/800;
 		return true;
 	}
 

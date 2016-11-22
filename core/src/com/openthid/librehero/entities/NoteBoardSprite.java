@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 
+import com.openthid.librehero.entities.SongData.Bar;
 import com.openthid.librehero.entities.SongData.Note;
 import com.openthid.librehero.screens.FieldScreen;
 
@@ -24,7 +25,7 @@ public class NoteBoardSprite {
 	private int ySize;
 	private float skewFactor;
 
-	int columns; // Number of columns that notes can
+	int columns; // Number of columns that notes can be in
 	float width; // Width of each line separating the columns and on the edges
 	float unit; // The width of each columns
 
@@ -83,31 +84,6 @@ public class NoteBoardSprite {
 			boardSprites[i].draw(batch);
 		}
 		batch.draw(getKeyTexture('A'), 40, 40);
-
-//		IntFunction<Float> notePos = i -> (i+0.5f)*unit+(i+1)*width; // TODO Externalize
-		
-//		Texture a = getKeyTexture('A');
-		
-//		for (int i = 0; i < board.getKeys().length; i++) {
-//			Texture texture = getKeyTexture(board.getKeys()[i]);
-//			drawTexture(batch, texture, notePos.apply(i), 0, 0.8f);
-//		}
-		
-//		drawTexture(batch, a, notePos.apply(0), 0*FieldScreen.fff*ySize+70*4, 0.8f);
-//		drawTexture(batch, a, notePos.apply(1), 0*FieldScreen.fff*ySize+70*3, 0.8f);
-//		drawTexture(batch, a, notePos.apply(2), 0*FieldScreen.fff*ySize+70*2, 0.8f);
-//		drawTexture(batch, a, notePos.apply(3), 0*FieldScreen.fff*ySize+70*7, 0.8f);
-//		drawTexture(batch, a, notePos.apply(4), 0*FieldScreen.fff*ySize+70*1, 0.8f);
-//		drawTexture(batch, a, notePos.apply(4), 0*FieldScreen.fff*ySize+70*2, 0.8f);
-//		drawTexture(batch, a, notePos.apply(4), 0*FieldScreen.fff*ySize+70*3, 0.8f);
-//		drawTexture(batch, a, notePos.apply(4), 0*FieldScreen.fff*ySize+70*4, 0.8f);
-//		drawTexture(batch, a, notePos.apply(4), 0*FieldScreen.fff*ySize+70*5, 0.8f);
-//		drawTexture(batch, a, notePos.apply(4), 0*FieldScreen.fff*ySize+70*6, 0.8f);
-		
-//		for (int i = song.getCurrentNoteIndex(); i < song.getNotes().length; i++) {
-//			Note note = song.getNotes()[i];
-//			drawNote(batch, note);
-//		}
 		
 		for (int i = 0; i < song.getKeys().length; i++) {
 			for (int j = 0; j < 9; j++) {
@@ -115,51 +91,63 @@ public class NoteBoardSprite {
 				drawNote(batch, note);
 			}
 		}
+		Note note = new Note(3, 3.5f);
+		drawNote(batch, note);
 		
-//		int y = (int) (FieldScreen.fff*ySize);
-//		PolygonSprite lineSprite = rect(0, y, xSize, y+10);
-//		lineSprite.setColor(0.8f, 0, 0.3f, 1);
-//		lineSprite.draw(batch);
-//		testMouseSprite(batch);
+		for (int i = 0; i < song.getBars().length; i++) {
+			drawBar(batch, song.getBars()[i]);
+		}
 	}
 
-	private float notePos(int pitch) {
-		return (pitch+0.5f)*unit+(pitch+1)*width;
+	private void drawBar(PolygonSpriteBatch batch, Bar bar) {
+		float y = bar.time;
+		PolygonSprite lineSprite = rect(0, y, xSize, y+10);
+		lineSprite.setColor(0.8f, 0, 0.3f, 1);
+		lineSprite.draw(batch);
 	}
 
 	private void drawNote(PolygonSpriteBatch batch, Note note) {
 		Texture texture = getKeyTexture(song.getKeys()[note.pitch]);
-		float beatsAway = (note.time-song.getCurrentTime());
+		float beatsAway = (note.time-song.getCurrentTime()); //+ FieldScreen.fff3*8-4; // TEMP
 		float y = unit*beatsAway + unit/2 + width;
 		int pitch = note.pitch;
 		float x = (pitch+1)*(width+unit)  -0.5f*unit;
-		drawTexture(batch, texture, x, y, 0.8f);
-	}
-
-	private void drawTexture(PolygonSpriteBatch batch, Texture texture, float x, float y) {
-		drawTexture(batch, texture, x, y, 1);
-	}
-
-	private void drawTexture(PolygonSpriteBatch batch, Texture texture, float x, float y, float scale) {
+		
+		float scale = 0.8f;
+//		drawTexture(batch, texture, x, y, 0.8f);
+//	}
+//
+//	private void drawTexture(PolygonSpriteBatch batch, Texture texture, float x, float y, float scale) {
 		float angle = projectZeroAngle(x);
 		float width = projectWidth(texture.getWidth(), y);
 		float height = projectWidth(texture.getHeight(), y);
 		
 		float x2 = projectX(x, y);
 		float y2 = projectY(x, y);
+//		float yp = projectY(preProject(x), preProject(y));
 		batch.draw(
 				texture,
-				x2-width/2,	// x
-				y2-height/2,	// y
-				width/2, height/2,	// originX, originY
-				width, height,	// width, height
-				scale, scale, angle,	//scaleX, scaleY, rotation
-				0, 0, texture.getWidth(), texture.getHeight(),	// srcX, srcY, srcWidth, srcHeight
-				false, false	// flipX, flipY
+				x2-width/2, // x
+				y2-height/2, // y
+				width/2, height/2, // originX, originY
+				width, height, // width, height
+				scale, scale, angle, //scaleX, scaleY, rotation
+				0, 0, texture.getWidth(), texture.getHeight(), // srcX, srcY, srcWidth, srcHeight
+				false, false // flipX, flipY
 			);
-		PolygonSprite sprite2 = rect(x-2, y-2, x+2, y+2);
-		sprite2.setColor(0.3f, 1, 0, 1);
-		sprite2.draw(batch);
+//		float beatsAway2 = beatsAway;
+//		while (beatsAway2 > 0) {
+//			projectWidth(0, y);
+//			beatsAway2--;
+//		}
+		
+//		PolygonSprite sprite2 = rect(x-2, yp-2, x+2, yp+2);
+//		sprite2.setColor(0.3f, 1, 0, 1);
+//		sprite2.draw(batch);
+	}
+
+	private float preProject(float value) { // TODO Make this actually work
+		return value*skewFactor + ((float) Math.sqrt(value)*10)*(1-skewFactor);
 	}
 
 	private PolygonSprite rect(float x1, float y1, float x2, float y2) {
@@ -204,7 +192,6 @@ public class NoteBoardSprite {
 	private float projectY(float x, float y) {
 		return y + yPos;
 	}
-
 
 	/**
 	 * Projects vectors from the space within the sprite to the space of the screen.

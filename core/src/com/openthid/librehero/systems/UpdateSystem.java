@@ -23,7 +23,7 @@ public class UpdateSystem extends EntitySystem {
 	@Override
 	public void update(float deltaTime) {
 		updatingComponents.forEach(e -> {
-			e.getComponent(UpdatingComponent.class);
+			e.getComponent(UpdatingComponent.class).callback.accept(deltaTime);
 		});
 	}
 }
