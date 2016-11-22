@@ -36,7 +36,7 @@ public class ArrayDropQueue<E> {
 	}
 
 	public void predicatedDrop(Predicate<E> predicate) {
-		while (predicate.evaluate(array[nextIndex])) {
+		while (!isEmpty() && predicate.evaluate(array[nextIndex])) {
 			drop();
 		}
 	}

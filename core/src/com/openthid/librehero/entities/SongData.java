@@ -2,15 +2,15 @@ package com.openthid.librehero.entities;
 
 public class SongData {
 
-	private Note[] notes;
-	private Bar[] bars;
+	private NoteData[] notes;
+	private BarData[] bars;
 	private char keys[];
 	float tempo;
 
 	/**
 	 * @param notes Must be sorted by {@code Note.time}
 	 */
-	public SongData(Note[] notes, Bar[] bars, char[] keys, float tempo) {
+	public SongData(NoteData[] notes, BarData[] bars, char[] keys, float tempo) {
 		this.notes = notes;
 		this.bars = bars;
 		this.keys = keys;
@@ -18,10 +18,10 @@ public class SongData {
 	}
 
 	/**
-	 * The {@link Note}s used to play the song
+	 * The {@link NoteData}s used to play the song
 	 * Sorted by {@code Note.time}
 	 */
-	public Note[] getNotes() {
+	public NoteData[] getNotes() {
 		return notes;
 	}
 
@@ -42,7 +42,7 @@ public class SongData {
 	/**
 	 * @return The bars
 	 */
-	public Bar[] getBars() {
+	public BarData[] getBars() {
 		return bars;
 	}
 
@@ -54,18 +54,18 @@ public class SongData {
 	}
 
 	public static SongData fromArrays(int[] pitches, float[] times, char[] keys, float[] barTimes, float tempo) {
-		Note[] notes = new Note[pitches.length];
+		NoteData[] notes = new NoteData[pitches.length];
 		for (int i = 0; i < pitches.length; i++) {
-			notes[i] = new Note(pitches[i], times[i]);
+			notes[i] = new NoteData(pitches[i], times[i]);
 		}
-		Bar[] bars = new Bar[barTimes.length];
+		BarData[] bars = new BarData[barTimes.length];
 		for (int i = 0; i < bars.length; i++) {
-			bars[i] = new Bar(barTimes[i]);
+			bars[i] = new BarData(barTimes[i]);
 		}
 		return new SongData(notes, bars, keys, tempo);
 	}
 
-	public static class Note {
+	public static class NoteData {
 		/**
 		 * Which column the note will be sent down
 		 */
@@ -75,19 +75,19 @@ public class SongData {
 		 */
 		public float time;
 		
-		public Note(int pitch, float time) {
+		public NoteData(int pitch, float time) {
 			this.pitch = pitch;
 			this.time = time;
 		}
 	}
 
-	public static class Bar {
+	public static class BarData {
 		/**
 		 * Length of the bar in beats
 		 */
 		public float time;
 
-		public Bar(float time) {
+		public BarData(float time) {
 			this.time = time;
 		}
 	}

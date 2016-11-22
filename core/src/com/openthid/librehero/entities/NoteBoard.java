@@ -12,14 +12,14 @@ public class NoteBoard {
 
 	private Song song;
 
-	public NoteBoard(int xPos, int yPos, int xSize, int ySize, float skewFactor, Song song) {
+	public NoteBoard(int xPos, int yPos, int xSize, int ySize, float skewFactor, float density, Song song) {
 		this.song = song;
 		
 		SelfRenderedComponent selfRenderedComponent = new SelfRenderedComponent(this::draw);
 		entity = new Entity();
 		entity.add(selfRenderedComponent);
 		
-		sprite = new NoteBoardSprite(xPos, yPos, xSize, ySize, skewFactor, this, song);
+		sprite = new NoteBoardSprite(xPos, yPos, xSize, ySize, skewFactor, density, this, song);
 	}
 
 	public char[] getKeys() {
@@ -36,5 +36,9 @@ public class NoteBoard {
 
 	public int getColumns() {
 		return getKeys().length;
+	}
+
+	public void keyDown(int keycode) {
+		
 	}
 }

@@ -10,9 +10,8 @@ import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 
-import com.openthid.librehero.entities.SongData.Bar;
-import com.openthid.librehero.entities.SongData.Note;
-import com.openthid.librehero.screens.FieldScreen;
+import com.openthid.librehero.entities.SongData.BarData;
+import com.openthid.librehero.entities.SongData.NoteData;
 
 public class NoteBoardSprite {
 
@@ -23,7 +22,8 @@ public class NoteBoardSprite {
 	private int yPos;
 	private int xSize;
 	private int ySize;
-	private float skewFactor;
+	private float skewFactor; // The ratio of the width at the bottom of the board to the width at the top of the board
+	private float density; // The density of the notes
 
 	int columns; // Number of columns that notes can be in
 	float width; // Width of each line separating the columns and on the edges
@@ -35,12 +35,13 @@ public class NoteBoardSprite {
 	private TextureRegion whiteDot;
 	private PolygonSprite[] boardSprites;
 
-	public NoteBoardSprite(int xPos, int yPos, int xSize, int ySize, float skewFactor, NoteBoard board, Song song) {
+	public NoteBoardSprite(int xPos, int yPos, int xSize, int ySize, float skewFactor, float density, NoteBoard board, Song song) {
 		this.xPos = xPos;
 		this.yPos = yPos;
 		this.xSize = xSize;
 		this.ySize = ySize;
 		this.skewFactor = skewFactor;
+		this.density = density;
 		this.board = board;
 		this.song = song;
 		
@@ -83,14 +84,8 @@ public class NoteBoardSprite {
 		for (int i = 1; i < boardSprites.length; i++) {
 			boardSprites[i].draw(batch);
 		}
-		
-		for (int i = song.getCurrentBarIndex(); i < song.getBars().length; i++) {
-			drawBar(batch, song.getBars()[i]);
-		}
-		
-		for (int i = song.getCurrentNoteIndex(); i < song.getNotes().length; i++) {
-			drawNote(batch, song.getNotes()[i]);
-		}
+		song.forEachRemainingBar(bar -> drawBar(batch, bar));
+		song.forEachRemainingNote(note -> drawNote(batch, note));
 	}
 
 	/**
@@ -99,35 +94,29 @@ public class NoteBoardSprite {
 	 * @return y position within the board
 	 */
 	private float beatsToPosition(float time) {
-		float beatsAway = (time-song.getCurrentTime());
+		float beatsAway = (time-song.getCurrentBeatsTime())*density;
 		return unit*beatsAway + unit/2 + width;
 	}
 
-	private void drawBar(PolygonSpriteBatch batch, Bar bar) {
+	private void drawBar(PolygonSpriteBatch batch, BarData bar) {
 		float y = beatsToPosition(bar.time);
 		PolygonSprite lineSprite = rect(0, y, xSize, y+10);
 		lineSprite.setColor(0, 0.1f, 1, 1);
 		lineSprite.draw(batch);
 	}
 
-	private void drawNote(PolygonSpriteBatch batch, Note note) {
+	private void drawNote(PolygonSpriteBatch batch, NoteData note) {
 		Texture texture = getKeyTexture(song.getKeys()[note.pitch]);
 		float y = beatsToPosition(note.time);
-		int pitch = note.pitch;
-		float x = (pitch+1)*(width+unit)  -0.5f*unit;
+		float x = (note.pitch+1)*(width+unit)  -0.5f*unit;
 		
 		float scale = 0.8f;
-//		drawTexture(batch, texture, x, y, 0.8f);
-//	}
-//
-//	private void drawTexture(PolygonSpriteBatch batch, Texture texture, float x, float y, float scale) {
 		float angle = projectZeroAngle(x);
 		float width = projectWidth(texture.getWidth(), y);
 		float height = projectWidth(texture.getHeight(), y);
 		
-		float x2 = projectX(x, y);
-		float y2 = projectY(x, y);
-//		float yp = projectY(preProject(x), preProject(y));
+		float x2 = projectX(x, preProject(y));
+		float y2 = projectY(x, preProject(y));
 		batch.draw(
 				texture,
 				x2-width/2, // x
@@ -138,19 +127,6 @@ public class NoteBoardSprite {
 				0, 0, texture.getWidth(), texture.getHeight(), // srcX, srcY, srcWidth, srcHeight
 				false, false // flipX, flipY
 			);
-//		float beatsAway2 = beatsAway;
-//		while (beatsAway2 > 0) {
-//			projectWidth(0, y);
-//			beatsAway2--;
-//		}
-		
-//		PolygonSprite sprite2 = rect(x-2, yp-2, x+2, yp+2);
-//		sprite2.setColor(0.3f, 1, 0, 1);
-//		sprite2.draw(batch);
-	}
-
-	private float preProject(float value) { // TODO Make this actually work
-		return value*skewFactor + ((float) Math.sqrt(value)*10)*(1-skewFactor);
 	}
 
 	private PolygonSprite rect(float x1, float y1, float x2, float y2) {
@@ -164,6 +140,10 @@ public class NoteBoardSprite {
 	private float projectWidth(float width, float y) {
 		float heightRatio = y/ySize;
 		return width*(1 + (skewFactor-1)*heightRatio);
+	}
+
+	private float preProject(float value) { // TODO Make this actually work
+		return value*skewFactor + ((float) Math.sqrt(value)*6)*(1-skewFactor);
 	}
 
 	/**
