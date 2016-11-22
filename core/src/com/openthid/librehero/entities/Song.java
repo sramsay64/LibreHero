@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.Entity;
 import com.openthid.librehero.components.UpdatingComponent;
 import com.openthid.librehero.entities.SongData.Bar;
 import com.openthid.librehero.entities.SongData.Note;
+import com.openthid.util.ArrayDropQueue;
 
 public class Song {
 
@@ -12,8 +13,8 @@ public class Song {
 	private float duration;
 
 	private float currentTime;
-	private int currentNoteIndex;
-	private int currentBarIndex;
+	private ArrayDropQueue<Note> noteQueue;
+	private ArrayDropQueue<Bar> barQueue;
 
 	private Entity entity;
 
@@ -22,8 +23,8 @@ public class Song {
 		this.duration = duration;
 		
 		this.currentTime = 0;
-		this.currentNoteIndex = 0;
-		this.currentBarIndex = 0;
+		this.noteQueue = new ArrayDropQueue<>(getNotes());
+		this.barQueue = new ArrayDropQueue<>(getBars());
 		
 		UpdatingComponent updatingComponent = new UpdatingComponent(this::update);
 		entity = new Entity();
@@ -64,8 +65,23 @@ public class Song {
 
 	private void update(float deltaTime) {
 		currentTime += deltaTime;
-		while (getNotes()[currentNoteIndex].time < currentTime) {
-			currentNoteIndex++;
+		if (!notesFinished) {
+			if (getNotes()[getNotes().length-1].time < currentTime) {
+				notesFinished = true;
+			} else {
+				while (getNotes()[currentNoteIndex].time < currentTime) {
+					currentNoteIndex++;
+				}
+			}
+		}
+		if (!barsFinished) {
+			if (getBars()[getBars().length-1].time < currentTime) {
+				barsFinished = true;
+			} else {
+				while (getBars()[currentBarIndex].time < currentTime) {
+					currentBarIndex++;
+				}
+			}
 		}
 	}
 

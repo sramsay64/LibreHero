@@ -77,39 +77,42 @@ public class NoteBoardSprite {
 	}
 
 	public void draw(PolygonSpriteBatch batch) {
-		skewFactor = FieldScreen.fff;
 		boardSprites = makeBoardSprites();
+		boardSprites[0].draw(batch);
 		
-		for (int i = 0; i < boardSprites.length; i++) {
+		for (int i = 1; i < boardSprites.length; i++) {
 			boardSprites[i].draw(batch);
 		}
-		batch.draw(getKeyTexture('A'), 40, 40);
 		
-		for (int i = 0; i < song.getKeys().length; i++) {
-			for (int j = 0; j < 9; j++) {
-				Note note = new Note(i, j);
-				drawNote(batch, note);
-			}
-		}
-		Note note = new Note(3, 3.5f);
-		drawNote(batch, note);
-		
-		for (int i = 0; i < song.getBars().length; i++) {
+		for (int i = song.getCurrentBarIndex(); i < song.getBars().length; i++) {
 			drawBar(batch, song.getBars()[i]);
+		}
+		
+		for (int i = song.getCurrentNoteIndex(); i < song.getNotes().length; i++) {
+			drawNote(batch, song.getNotes()[i]);
 		}
 	}
 
+	/**
+	 * Converts the time in the the song to position within the board
+	 * @param time Time in beats
+	 * @return y position within the board
+	 */
+	private float beatsToPosition(float time) {
+		float beatsAway = (time-song.getCurrentTime());
+		return unit*beatsAway + unit/2 + width;
+	}
+
 	private void drawBar(PolygonSpriteBatch batch, Bar bar) {
-		float y = bar.time;
+		float y = beatsToPosition(bar.time);
 		PolygonSprite lineSprite = rect(0, y, xSize, y+10);
-		lineSprite.setColor(0.8f, 0, 0.3f, 1);
+		lineSprite.setColor(0, 0.1f, 1, 1);
 		lineSprite.draw(batch);
 	}
 
 	private void drawNote(PolygonSpriteBatch batch, Note note) {
 		Texture texture = getKeyTexture(song.getKeys()[note.pitch]);
-		float beatsAway = (note.time-song.getCurrentTime()); //+ FieldScreen.fff3*8-4; // TEMP
-		float y = unit*beatsAway + unit/2 + width;
+		float y = beatsToPosition(note.time);
 		int pitch = note.pitch;
 		float x = (pitch+1)*(width+unit)  -0.5f*unit;
 		

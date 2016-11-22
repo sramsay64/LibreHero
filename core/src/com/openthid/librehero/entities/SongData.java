@@ -53,10 +53,10 @@ public class SongData {
 		return tempo;
 	}
 
-	public static SongData fromArrays(int[] pitches, float[] barTimes, char[] keys, float[] barLengths, float tempo) {
+	public static SongData fromArrays(int[] pitches, float[] times, char[] keys, float[] barTimes, float tempo) {
 		Note[] notes = new Note[pitches.length];
 		for (int i = 0; i < pitches.length; i++) {
-			notes[i] = new Note(pitches[i], barTimes[i]);
+			notes[i] = new Note(pitches[i], times[i]);
 		}
 		Bar[] bars = new Bar[barTimes.length];
 		for (int i = 0; i < bars.length; i++) {
