@@ -10,13 +10,14 @@ import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 
+import com.openthid.librehero.entities.Song.Note;
 import com.openthid.librehero.entities.SongData.BarData;
-import com.openthid.librehero.entities.SongData.NoteData;
 
 public class NoteBoardSprite {
 
 	private static final short[] rectShorts = new short[]{0,1,2,2,3,0};
 	private static final HashMap<Character, Texture> keyboardSprites = new HashMap<>();
+	private static final HashMap<Character, Texture> keyboardSpritesBlack = new HashMap<>();
 
 	private int xPos;
 	private int yPos;
@@ -84,8 +85,12 @@ public class NoteBoardSprite {
 		for (int i = 1; i < boardSprites.length; i++) {
 			boardSprites[i].draw(batch);
 		}
-		song.forEachRemainingBar(bar -> drawBar(batch, bar));
-		song.forEachRemainingNote(note -> drawNote(batch, note));
+		for (int i = 0; i < song.getBars().length; i++) {
+			drawBar(batch, song.getBars()[i]);
+		}
+		for (int i = 0; i < song.getNotes().length; i++) {
+			drawNote(batch, song.getNotes()[i]);
+		}
 	}
 
 	/**
@@ -94,39 +99,49 @@ public class NoteBoardSprite {
 	 * @return y position within the board
 	 */
 	private float beatsToPosition(float time) {
-		float beatsAway = (time-song.getCurrentBeatsTime())*density;
-		return unit*beatsAway + unit/2 + width;
+		float beatsAway = time-song.getCurrentBeatsTime();
+		float value = unit*beatsAway*density + unit/2 + width;
+		return value*skewFactor + Math.signum(value)*((float) Math.sqrt(Math.abs(value))*6)*(1-skewFactor);
 	}
 
 	private void drawBar(PolygonSpriteBatch batch, BarData bar) {
 		float y = beatsToPosition(bar.time);
-		PolygonSprite lineSprite = rect(0, y, xSize, y+10);
-		lineSprite.setColor(0, 0.1f, 1, 1);
-		lineSprite.draw(batch);
+		if (y > 0 && y < ySize-width) {
+			PolygonSprite lineSprite = rect(0, y, xSize, y+width);
+			lineSprite.setColor(0, 0.1f, 1, 1);
+			lineSprite.draw(batch);
+		}
 	}
 
-	private void drawNote(PolygonSpriteBatch batch, NoteData note) {
-		Texture texture = getKeyTexture(song.getKeys()[note.pitch]);
-		float y = beatsToPosition(note.time);
-		float x = (note.pitch+1)*(width+unit)  -0.5f*unit;
-		
-		float scale = 0.8f;
-		float angle = projectZeroAngle(x);
-		float width = projectWidth(texture.getWidth(), y);
-		float height = projectWidth(texture.getHeight(), y);
-		
-		float x2 = projectX(x, preProject(y));
-		float y2 = projectY(x, preProject(y));
-		batch.draw(
-				texture,
-				x2-width/2, // x
-				y2-height/2, // y
-				width/2, height/2, // originX, originY
-				width, height, // width, height
-				scale, scale, angle, //scaleX, scaleY, rotation
-				0, 0, texture.getWidth(), texture.getHeight(), // srcX, srcY, srcWidth, srcHeight
-				false, false // flipX, flipY
-			);
+	private void drawNote(PolygonSpriteBatch batch, Note note) {
+		if (note.isAlive()) {
+			Texture texture = getKeyTexture(song.getKeys()[note.getPitch()]);
+			if (note.wasPlayed()) {
+				texture = getKeyTextureBlack(song.getKeys()[note.getPitch()]);
+			}
+			float y = beatsToPosition(note.getTime());
+			float x = (note.getPitch()+1)*(width+unit)  -0.5f*unit;
+			
+			if (y < ySize) {
+				float scale = 0.8f;
+				float angle = projectZeroAngle(x);
+				float width = projectWidth(texture.getWidth(), y);
+				float height = projectWidth(texture.getHeight(), y);
+				
+				float x2 = projectX(x, y);
+				float y2 = projectY(x, y);
+				batch.draw(
+						texture,
+						x2-width/2, // x
+						y2-height/2, // y
+						width/2, height/2, // originX, originY
+						width, height, // width, height
+						scale, scale, angle, //scaleX, scaleY, rotation
+						0, 0, texture.getWidth(), texture.getHeight(), // srcX, srcY, srcWidth, srcHeight
+						false, false // flipX, flipY
+					);
+			}
+		}
 	}
 
 	private PolygonSprite rect(float x1, float y1, float x2, float y2) {
@@ -140,10 +155,6 @@ public class NoteBoardSprite {
 	private float projectWidth(float width, float y) {
 		float heightRatio = y/ySize;
 		return width*(1 + (skewFactor-1)*heightRatio);
-	}
-
-	private float preProject(float value) { // TODO Make this actually work
-		return value*skewFactor + ((float) Math.sqrt(value)*6)*(1-skewFactor);
 	}
 
 	/**
@@ -202,5 +213,16 @@ public class NoteBoardSprite {
 			keyboardSprites.put(key, texture);
 		}
 		return keyboardSprites.get(key);
+	}
+
+	private Texture getKeyTextureBlack(char key) {
+		if (Character.isLowerCase(key)) {
+			key = Character.toUpperCase(key);
+		}
+		if (!keyboardSpritesBlack.containsKey(key)) {
+			Texture texture = new Texture("Xelu_FREE_keyboard&controller_prompts_pack/Keyboard & Mouse/Dark/Keyboard_Black_" + key + ".png");
+			keyboardSpritesBlack.put(key, texture);
+		}
+		return keyboardSpritesBlack.get(key);
 	}
 }

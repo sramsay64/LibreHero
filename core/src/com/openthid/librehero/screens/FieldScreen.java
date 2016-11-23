@@ -73,9 +73,9 @@ public class FieldScreen extends BaseScreen {
 				new int[]{	2,1,0,1,2,2,2,1,1, 1, 2, 4, 4},
 				new float[]{0,1,2,3,4,5,6,8,9,10,12,13,14},
 				new char[]{'q','w','e','r','t'},
-				new float[]{0,4,8,12,16,20},
+				new float[]{-4,0,4,8,12,16,20},
 				120
-			), 60, -4);
+			), 30, -4);
 		
 		noteBoard = new NoteBoard(400, 100, 500, 600, 1f, 0.8f, song);
 		engine.addEntity(noteBoard.getEntity());

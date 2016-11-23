@@ -1,22 +1,19 @@
 package com.openthid.librehero.entities;
 
-import java.util.function.Consumer;
-
 import com.badlogic.ashley.core.Entity;
 
 import com.openthid.librehero.components.UpdatingComponent;
 import com.openthid.librehero.entities.SongData.BarData;
 import com.openthid.librehero.entities.SongData.NoteData;
-import com.openthid.util.ArrayDropQueue;
+import com.openthid.util.FunctionalUtils;
 
 public class Song {
 
 	private SongData songData;
 	private float duration;
+	private Note[] notes;
 
 	private float currentTime; // Measured in seconds
-	private ArrayDropQueue<NoteData> noteQueue;
-	private ArrayDropQueue<BarData> barQueue;
 
 	private Entity entity;
 
@@ -25,8 +22,7 @@ public class Song {
 		this.duration = duration;
 		this.currentTime = currentTime;
 		
-		this.noteQueue = new ArrayDropQueue<>(songData.getNotes());
-		this.barQueue = new ArrayDropQueue<>(songData.getBars());
+		notes = FunctionalUtils.map(songData.getNotes(), noteData -> new Note(noteData), i -> new Note[i]);
 		
 		UpdatingComponent updatingComponent = new UpdatingComponent(this::update);
 		entity = new Entity();
@@ -66,26 +62,52 @@ public class Song {
 		return songData.getKeys();
 	}
 
-	public void forEachRemainingNote(Consumer<NoteData> consumer) {
-		noteQueue.forEachRemaining(consumer);
+	public Note[] getNotes() {
+		return notes;
 	}
 
-	public void forEachRemainingBar(Consumer<BarData> consumer) {
-		barQueue.forEachRemaining(consumer);
+	public BarData[] getBars() {
+		return songData.getBars();
+	}
+
+	public boolean notePlayable(Note note) {
+		float beatsAway = note.getTime()-getCurrentBeatsTime();
+		return beatsAway > -0.5f && beatsAway < 0.5f;
 	}
 
 	private void update(float deltaTime) {
 		currentTime += deltaTime;
-		noteQueue.predicatedDrop(note -> {
-			return note.time+getBeatsPerSec()/2 < getCurrentBeatsTime();
-		});
-		barQueue.predicatedDrop(bar -> {
-			return bar.time+getBeatsPerSec()/2 < getCurrentBeatsTime();
-		});
 	}
 
 	public static class Note {
 		private NoteData data;
+		private boolean alive;
+		private boolean played;
+
+		public Note(NoteData data) {
+			this.data = data;
+			this.alive = true;
+			this.played = false;
+		}
+
+		public int getPitch() {
+			return data.pitch;
+		}
+
+		public float getTime() {
+			return data.time;
+		}
+
+		public boolean isAlive() {
+			return alive;
+		}
+
+		public boolean wasPlayed() {
+			return played;
+		}
 		
+		public void play() {
+			played = true;
+		}
 	}
 }
