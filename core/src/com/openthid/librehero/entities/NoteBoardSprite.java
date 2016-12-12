@@ -95,11 +95,9 @@ public class NoteBoardSprite {
 		for (int i = 0; i < song.getNotes().length; i++) {
 			drawNote(batch, song.getNotes()[i]);
 		}
-		Note n = song.getNotes()[0];
 		PolygonSprite rect = rect(0, 0, 300, 300);
 		rect.setColor(1, 1, 1, (song.getBeatsPerSec()*board.getPosition()/4%1 > 0.5) ? 1 : 0);
 //		rect.draw(batch);
-//		System.out.println(n.getTime());
 	}
 
 	/**

@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 
 import com.openthid.librehero.components.SelfRenderedComponent;
 import com.openthid.librehero.entities.Song.Note;
+import com.openthid.librehero.entities.SongData.NoteData;
 
 public class NoteBoard {
 
@@ -55,10 +55,13 @@ public class NoteBoard {
 	}
 
 	private ArrayList<Float> floats = new ArrayList<>();
+	private ArrayList<NoteData> notes = new ArrayList<>();
 	public void keyDown(int keycode) {
 		for (int i = 0; i < keyCodes.length; i++) {
 			if (keycode == keyCodes[i]) {
 				playNote(i);
+				NoteData data = new NoteData(i, song.getCurrentBeatsTime());
+				notes.add(data);
 			}
 		}
 		if (keycode == Input.Keys.SPACE) {
@@ -67,6 +70,11 @@ public class NoteBoard {
 		if (keycode == Input.Keys.ENTER) {
 			System.out.println("===== Times =====");
 			floats.forEach(System.out::println);
+			System.out.println("===== Notes =====");
+			notes.forEach(note -> System.out.print(note.pitch + ", "));
+			System.out.println();
+			notes.forEach(note -> System.out.print(note.time + "f, "));
+			System.out.println();
 			System.out.println("=====");
 		}
 		if (keycode == Input.Keys.ALT_RIGHT) {

@@ -79,6 +79,11 @@ public class SongData {
 			this.pitch = pitch;
 			this.time = time;
 		}
+
+		@Override
+		public String toString() {
+			return "NoteData [pitch=" + pitch + ", time=" + time + "]";
+		}
 	}
 
 	public static class BarData {
