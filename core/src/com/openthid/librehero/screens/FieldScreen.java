@@ -6,6 +6,7 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Scaling;
@@ -68,18 +69,24 @@ public class FieldScreen extends BaseScreen {
 			return true;
 		});
 		stage.addActor(zoomSlider);
-		
-		song = new Song(SongData.fromArrays(
+
+//		Music music = Gdx.audio.newMusic(Gdx.files.internal("music/09_-_Brad_Sucks_-_Out_of_It.mp3"));
+		Music music = Gdx.audio.newMusic(Gdx.files.absolute("/home/scott/Music/Track 2.wav"));
+		song = new Song(music, SongData.fromArrays(
 				new int[]{	2,1,0,1,2,2,2,1,1, 1, 2, 4, 4},
 				new float[]{0,1,2,3,4,5,6,8,9,10,12,13,14},
 				new char[]{'q','w','e','r','t'},
-				new float[]{-4,0,4,8,12,16,20},
-				120
-			), 30, -4);
+				new float[]{-4,0,4,8,12,16,20,24,28,32,36,40},
+//				new float[]{-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40},
+//				131.589f
+//				119.4f
+				122.5f
+//				120
+			), 30, 0.24f);
 		
-		noteBoard = new NoteBoard(400, 100, 500, 600, 1f, 0.8f, song);
+		noteBoard = new NoteBoard(400, 100, 500, 600, 1f, 1f, song);
 		engine.addEntity(noteBoard.getEntity());
-		engine.addEntity(song.getEntity());
+//		engine.addEntity(song.getEntity());
 	}
 
 	@Override

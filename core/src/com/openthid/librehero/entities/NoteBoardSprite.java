@@ -29,6 +29,7 @@ public class NoteBoardSprite {
 	int columns; // Number of columns that notes can be in
 	float width; // Width of each line separating the columns and on the edges
 	float unit; // The width of each columns
+	float zeroBarPos; // The y position of the middle of the bar
 
 	private NoteBoard board;
 	private Song song;
@@ -63,27 +64,30 @@ public class NoteBoardSprite {
 		
 		sprites[0] = rect(0, 0, xSize, ySize);
 		sprites[0].setColor(0, 0.6f, 1, 1);
+		sprites[1] = rect(0, unit/2+width/2, xSize, unit/2+width*1.5f);
+		sprites[1].setColor(0.4f, 0.8f, 1, 1);
 		
 		for (int i = 0; i < columns+1; i++) {
 			float x = (xSize-width)/columns*i;
-			sprites[i+1] = rect(x, 0, x+width, ySize);
-			sprites[i+1].setColor(0.1f, 0, 1, 1);
+			sprites[i+2] = rect(x, 0, x+width, ySize);
+			sprites[i+2].setColor(0.1f, 0, 1, 1);
 		}
 		
-		sprites[columns+2] = rect(0, 0, xSize, width);
-		sprites[columns+2].setColor(0.1f, 0, 1, 1);
-		sprites[columns+3] = rect(0, unit+width, xSize, unit+width*2);
+		sprites[columns+3] = rect(0, 0, xSize, width);
 		sprites[columns+3].setColor(0.1f, 0, 1, 1);
 		
 		return sprites;
 	}
 
 	public void draw(PolygonSpriteBatch batch) {
-		boardSprites = makeBoardSprites();
-		boardSprites[0].draw(batch);
+		boardSprites = makeBoardSprites(); // TODO Maybe remove (do we really need to regenerate this?)
 		
-		for (int i = 1; i < boardSprites.length; i++) {
+		for (int i = 0; i < boardSprites.length; i++) {
 			boardSprites[i].draw(batch);
+		}
+		for (int i = 0; i < song.getKeys().length; i++) {
+			char key = song.getKeys()[i];
+			drawKey(batch, pitchToPosition(i), beatsToPosition(song.getBeatsPerSec()*board.getPosition()), key, true);
 		}
 		for (int i = 0; i < song.getBars().length; i++) {
 			drawBar(batch, song.getBars()[i]);
@@ -91,6 +95,11 @@ public class NoteBoardSprite {
 		for (int i = 0; i < song.getNotes().length; i++) {
 			drawNote(batch, song.getNotes()[i]);
 		}
+		Note n = song.getNotes()[0];
+		PolygonSprite rect = rect(0, 0, 300, 300);
+		rect.setColor(1, 1, 1, (song.getBeatsPerSec()*board.getPosition()/4%1 > 0.5) ? 1 : 0);
+//		rect.draw(batch);
+//		System.out.println(n.getTime());
 	}
 
 	/**
@@ -99,48 +108,60 @@ public class NoteBoardSprite {
 	 * @return y position within the board
 	 */
 	private float beatsToPosition(float time) {
-		float beatsAway = time-song.getCurrentBeatsTime();
-		float value = unit*beatsAway*density + unit/2 + width;
-		return value*skewFactor + Math.signum(value)*((float) Math.sqrt(Math.abs(value))*6)*(1-skewFactor);
+		float beatsAway = time-song.getBeatsPerSec()*board.getPosition();
+		float value = unit*beatsAway*density + unit/2 + width + zeroBarPos;
+		return value;
+		//return value*skewFactor + Math.signum(value)*((float) Math.sqrt(Math.abs(value))*6)*(1-skewFactor);
+	}
+
+	private float pitchToPosition(int pitch) {
+		return (pitch+1)*(width+unit) -0.5f*unit;
 	}
 
 	private void drawBar(PolygonSpriteBatch batch, BarData bar) {
 		float y = beatsToPosition(bar.time);
 		if (y > 0 && y < ySize-width) {
-			PolygonSprite lineSprite = rect(0, y, xSize, y+width);
-			lineSprite.setColor(0, 0.1f, 1, 1);
+			PolygonSprite lineSprite = rect(0, y-width/2, xSize, y+width/2);
+			lineSprite.setColor(0.1f, 0, 1, 1);
 			lineSprite.draw(batch);
 		}
 	}
 
 	private void drawNote(PolygonSpriteBatch batch, Note note) {
 		if (note.isAlive()) {
-			Texture texture = getKeyTexture(song.getKeys()[note.getPitch()]);
-			if (note.wasPlayed()) {
-				texture = getKeyTextureBlack(song.getKeys()[note.getPitch()]);
-			}
 			float y = beatsToPosition(note.getTime());
-			float x = (note.getPitch()+1)*(width+unit)  -0.5f*unit;
-			
-			if (y < ySize) {
-				float scale = 0.8f;
-				float angle = projectZeroAngle(x);
-				float width = projectWidth(texture.getWidth(), y);
-				float height = projectWidth(texture.getHeight(), y);
-				
-				float x2 = projectX(x, y);
-				float y2 = projectY(x, y);
-				batch.draw(
-						texture,
-						x2-width/2, // x
-						y2-height/2, // y
-						width/2, height/2, // originX, originY
-						width, height, // width, height
-						scale, scale, angle, //scaleX, scaleY, rotation
-						0, 0, texture.getWidth(), texture.getHeight(), // srcX, srcY, srcWidth, srcHeight
-						false, false // flipX, flipY
-					);
+			float x = pitchToPosition(note.getPitch());
+			char key = song.getKeys()[note.getPitch()];
+			drawKey(batch, x, y, key, note.wasPlayed());
+		}	
+	}
+
+	private void drawKey(PolygonSpriteBatch batch, float x, float y, char key, boolean black) {
+		if (y < ySize) {
+			Texture texture;
+			if (black) {
+				texture = getKeyTextureBlack(key);
+			} else {
+				texture = getKeyTexture(key);
 			}
+			
+			float scale = 0.8f;
+			float angle = projectZeroAngle(x);
+			float width = projectWidth(texture.getWidth(), y);
+			float height = projectWidth(texture.getHeight(), y);
+			
+			float x2 = projectX(x, y);
+			float y2 = projectY(x, y);
+			batch.draw(
+					texture,
+					x2-width/2, // x
+					y2-height/2, // y
+					width/2, height/2, // originX, originY
+					width, height, // width, height
+					scale, scale, angle, //scaleX, scaleY, rotation
+					0, 0, texture.getWidth(), texture.getHeight(), // srcX, srcY, srcWidth, srcHeight
+					false, false // flipX, flipY
+				);
 		}
 	}
 

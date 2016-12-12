@@ -1,7 +1,10 @@
 package com.openthid.librehero.entities;
 
+import java.util.ArrayList;
+
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 
 import com.openthid.librehero.components.SelfRenderedComponent;
@@ -31,42 +34,47 @@ public class NoteBoard {
 		}
 	}
 
+	public Entity getEntity() {
+		return entity;
+	}
+
 	public char[] getKeys() {
 		return song.getKeys();
 	}
 
-	private void draw(PolygonSpriteBatch batch) {
-		sprite.draw(batch);
-	}
-
-	public Entity getEntity() {
-		return entity;
+	public float getPosition() {
+		return song.getPosition();
 	}
 
 	public int getColumns() {
 		return getKeys().length;
 	}
 
+	private void draw(PolygonSpriteBatch batch) {
+		sprite.draw(batch);
+	}
+
+	private ArrayList<Float> floats = new ArrayList<>();
 	public void keyDown(int keycode) {
 		for (int i = 0; i < keyCodes.length; i++) {
 			if (keycode == keyCodes[i]) {
 				playNote(i);
 			}
 		}
+		if (keycode == Input.Keys.SPACE) {
+			floats.add(getPosition());
+		}
+		if (keycode == Input.Keys.ENTER) {
+			System.out.println("===== Times =====");
+			floats.forEach(System.out::println);
+			System.out.println("=====");
+		}
+		if (keycode == Input.Keys.ALT_RIGHT) {
+			song.playPause();
+		}
 	}
 
 	private void playNote(int pitch) {
-//		Arrays.stream(song.getNotes())
-//			.filter(Note::isAlive)
-//			.filter(note -> {
-//				float beatsAway = note.getTime()-song.getCurrentBeatsTime();
-//				return beatsAway > -0.5f && beatsAway < 0.5f && !note.wasPlayed();
-//			}).filter(note -> note.getPitch() == pitch)
-//			.forEach(note -> {
-//				note.play();
-//				System.out.println(song.getKeys()[note.getPitch()]);
-//			}
-//		);
 		for (int i = 0; i < song.getNotes().length; i++) {
 			Note note = song.getNotes()[i];
 			if (song.notePlayable(note) && !note.wasPlayed() && note.getPitch() == pitch) {

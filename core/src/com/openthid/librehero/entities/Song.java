@@ -1,32 +1,36 @@
 package com.openthid.librehero.entities;
 
-import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.audio.Music;
 
-import com.openthid.librehero.components.UpdatingComponent;
 import com.openthid.librehero.entities.SongData.BarData;
 import com.openthid.librehero.entities.SongData.NoteData;
 import com.openthid.util.FunctionalUtils;
 
 public class Song {
 
+	private Music music;
+
 	private SongData songData;
-	private float duration;
 	private Note[] notes;
 
-	private float currentTime; // Measured in seconds
+	private float duration;
+	private float startTime;
 
-	private Entity entity;
-
-	public Song(SongData songData, float duration, float currentTime) {
+	/**
+	 * @param music
+	 * @param songData
+	 * @param duration
+	 * @param startTime An offset for when in the {@link Music} the song starts (for songs that contain some silence at the start)
+	 */
+	public Song(Music music, SongData songData, float duration, float startTime) {
+		this.music = music;
 		this.songData = songData;
 		this.duration = duration;
-		this.currentTime = currentTime;
+		this.startTime = startTime;
+		
+		music.setPosition(startTime);
 		
 		notes = FunctionalUtils.map(songData.getNotes(), noteData -> new Note(noteData), i -> new Note[i]);
-		
-		UpdatingComponent updatingComponent = new UpdatingComponent(this::update);
-		entity = new Entity();
-		entity.add(updatingComponent);
 	}
 
 	public float getBeatsPerSec() {
@@ -36,15 +40,15 @@ public class Song {
 	/**
 	 * @return Playback progress in seconds
 	 */
-	public float getCurrentTime() {
-		return currentTime;
+	public float getPosition() {
+		return music.getPosition()-startTime;
 	}
 
 	/**
 	 * @return Playback progress in beats
 	 */
 	public float getCurrentBeatsTime() {
-		return getCurrentTime()*getBeatsPerSec();
+		return getPosition()*getBeatsPerSec();
 	}
 
 	/**
@@ -52,10 +56,6 @@ public class Song {
 	 */
 	public float getDuration() {
 		return duration;
-	}
-
-	public Entity getEntity() {
-		return entity;
 	}
 
 	public char[] getKeys() {
@@ -73,10 +73,6 @@ public class Song {
 	public boolean notePlayable(Note note) {
 		float beatsAway = note.getTime()-getCurrentBeatsTime();
 		return beatsAway > -0.5f && beatsAway < 0.5f;
-	}
-
-	private void update(float deltaTime) {
-		currentTime += deltaTime;
 	}
 
 	public static class Note {
@@ -108,6 +104,17 @@ public class Song {
 		
 		public void play() {
 			played = true;
+		}
+	}
+
+	public void playPause() {
+		if (music.isPlaying()) {
+			music.pause();
+		} else {
+			music.play();
+		}
+		if (music.getPosition() < startTime) {
+			music.setPosition(startTime);
 		}
 	}
 }
