@@ -76,7 +76,7 @@ public class FieldScreen extends BaseScreen {
 //				131.589f
 				122.5f
 			), 30, 0.24f);
-		
+		song = songFile.makeSong();
 		noteBoard = new NoteBoard(400, 100, 500, 600, 1f, 2f, song);
 		engine.addEntity(noteBoard.getEntity());
 	}
