@@ -72,7 +72,7 @@ public class Song {
 
 	public boolean notePlayable(Note note) {
 		float beatsAway = note.getTime()-getCurrentBeatsTime();
-		return beatsAway > -0.5f && beatsAway < 0.5f;
+		return beatsAway > -0.4f && beatsAway < 0.4f; //TWEAK
 	}
 
 	public static class Note {

@@ -131,6 +131,7 @@ public class NoteBoardSprite {
 			float x = pitchToPosition(note.getPitch());
 			char key = song.getKeys()[note.getPitch()];
 			drawKey(batch, x, y, key, note.wasPlayed());
+//			drawKey(batch, x, y, key, song.notePlayable(note));
 		}	
 	}
 
