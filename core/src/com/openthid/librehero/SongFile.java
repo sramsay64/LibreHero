@@ -67,33 +67,7 @@ public class SongFile {
 
 	private Music makeMusic(JsonValue audioDataElem) {
 		String method = audioDataElem.getString("method");
-		if (method.equals("url")) {//TODO Maybe implement this?
-//			byte[] data = null;
-//			
-//			Consumer<byte[]> consumer = bs -> data = bs;
-//			
-//			HttpRequest httpRequest = new HttpRequest("GET");
-//			httpRequest.setUrl(audioDataElem.getString("url"));
-//			HttpResponseListener httpResponseListener = new HttpResponseListener() {
-//				@Override
-//				public void handleHttpResponse(HttpResponse httpResponse) {
-//					consumer.accept(httpResponse.getResult());
-//				}
-//				
-//				@Override
-//				public void failed(Throwable t) {
-//					// LATER Handle error
-//				}
-//				
-//				@Override
-//				public void cancelled() {
-//					// LATER Handle error
-//				}
-//			};
-//			Gdx.net.sendHttpRequest(httpRequest, httpResponseListener);
-//			return Gdx.audio.newMusic(null);
-			return null;
-		} else if (method.equals("file")) {
+		if (method.equals("file")) {
 			String file = audioDataElem.getString("file");
 			return Gdx.audio.newMusic(Gdx.files.absolute(file));
 		} else {
