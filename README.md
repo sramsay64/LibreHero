@@ -35,7 +35,7 @@ Licence
 
 Libre Hero is licensed under GPLv3 but submit an issue if you need it under a different licence ([licences can backfire after all](https://dolphin-emu.org/blog/2015/05/25/relicensing-dolphin)).
 
-Third party Assets
+Third party assets
 ------------------
 
 | Name | link | Licence |
