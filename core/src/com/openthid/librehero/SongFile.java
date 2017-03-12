@@ -1,12 +1,6 @@
 package com.openthid.librehero;
 
-import java.net.MulticastSocket;
-import java.util.function.Consumer;
-
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Net.HttpRequest;
-import com.badlogic.gdx.Net.HttpResponse;
-import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.JsonReader;

@@ -5,7 +5,7 @@ public class SongData {
 	private NoteData[] notes;
 	private BarData[] bars;
 	private char keys[];
-	float tempo;
+	private float tempo;
 
 	/**
 	 * @param notes Must be sorted by {@code Note.time}
@@ -71,7 +71,7 @@ public class SongData {
 		 */
 		public int pitch;
 		/**
-		 * Time in the song that the note appears. Measured in beats
+		 * Time in the song that the note appears. Measured in seconds
 		 */
 		public float time;
 		

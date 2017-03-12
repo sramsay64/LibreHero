@@ -34,7 +34,7 @@ public class Song {
 	}
 
 	public float getBeatsPerSec() {
-		return songData.tempo/60;
+		return songData.getTempo()/60;
 	}
 
 	/**
