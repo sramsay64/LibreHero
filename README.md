@@ -8,11 +8,27 @@ A musical game based inspired by guitar hero using libGDX.
 Planned features
 ----------------
 
-* Scoring / online leader boards
+* Scoring
 * HTML5 port through libGDX
-* Integrate with iTunes library
-* Show album art / Music video
-* Song editor allowing users expand the library of songs playable on Libre Hero
+* Integrate with user's iTunes libraries (to legally access popular music)
+* Proper file handling (rather than hard coding as it is now)
+
+### Possible features ###
+
+* Album art / Music video display
+* Lyrics display
+* Online leader boards
+* Song editor allowing users expand the library of songs playable in Libre Hero
+	* Web repository for users to submit song data
+
+Development instructions
+------------------------
+
+* Setup libGDX in eclipse
+* Import the libGDX project to eclipse
+* Download the [songs files](https://github.com/sramsay64/LibreHero-Songs) and setup the (currently hard coded) paths to point correctly.
+* Run the `DesktopLuncher` class
+* Press the right alt key to start
 
 Licence
 -------
