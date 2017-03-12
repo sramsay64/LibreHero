@@ -85,6 +85,7 @@ public class NoteBoard {
 			if (song.notePlayable(note) && !note.wasPlayed() && note.getPitch() == pitch) {
 				note.play();
 				System.out.println(song.getKeys()[note.getPitch()]);
+				return; // Only play one note per key press (solves the playing one late and one early note at the same time bug)
 			}
 		}
 	}

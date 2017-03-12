@@ -130,7 +130,9 @@ public class NoteBoardSprite {
 			float y = beatsToPosition(note.getTime());
 			float x = pitchToPosition(note.getPitch());
 			char key = song.getKeys()[note.getPitch()];
-			drawKey(batch, x, y, key, note.wasPlayed());
+			if (!note.wasPlayed()) {
+				drawKey(batch, x, y, key, note.wasPlayed());
+			}
 //			drawKey(batch, x, y, key, song.notePlayable(note));
 		}	
 	}
