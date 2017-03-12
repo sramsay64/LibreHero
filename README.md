@@ -9,10 +9,10 @@ Planned features
 ----------------
 
 * Scoring / online leader boards
-* Web based version
-* Use songs bought from iTunes
+* HTML5 port through libGDX
+* Integrate with iTunes library
 * Show album art / Music video
-* Make a song editor so people can make any song playable with Libre Hero themselves
+* Song editor allowing users expand the library of songs playable on Libre Hero
 
 Licence
 -------
@@ -25,5 +25,5 @@ Third party Assets
 | Name | link | Licence |
 | ---- | ---- | ------- |
 | Xelu's keyboard and controllers pack | <http://opengameart.org/content/free-keyboard-and-controllers-prompts-pack> | <a href="http://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" title="CC0"></a>
-| Kenney | <http://kenney.nl> | <a href="http://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" title="CC0"></a>
+| Kenney's Sprites | <http://kenney.nl> | <a href="http://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" title="CC0"></a>
 | Ubuntu Font | <http://font.ubuntu.com> | [Ubuntu Font Licence](http://font.ubuntu.com/licence/) |
