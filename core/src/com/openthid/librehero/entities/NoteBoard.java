@@ -14,13 +14,15 @@ public class NoteBoard {
 
 	private Entity entity;
 	private NoteBoardSprite sprite;
+	private ScoreBoard scoreBoard;
 
 	private Song song;
 
 	private int[] keyCodes;
 
-	public NoteBoard(int xPos, int yPos, int xSize, int ySize, float skewFactor, float density, Song song) {
+	public NoteBoard(int xPos, int yPos, int xSize, int ySize, float skewFactor, float density, Song song, ScoreBoard scoreBoard) {
 		this.song = song;
+		this.scoreBoard = scoreBoard;
 		
 		SelfRenderedComponent selfRenderedComponent = new SelfRenderedComponent(this::draw);
 		entity = new Entity();
@@ -60,7 +62,7 @@ public class NoteBoard {
 		for (int i = 0; i < keyCodes.length; i++) {
 			if (keycode == keyCodes[i]) {
 				playNote(i);
-				NoteData data = new NoteData(i, song.getCurrentBeatsTime());
+				NoteData data = new NoteData(i, song.getCurrentBeatsTime(), 10);
 				notes.add(data);
 			}
 		}
@@ -71,7 +73,7 @@ public class NoteBoard {
 			System.out.println("===== Times =====");
 			floats.forEach(System.out::println);
 			System.out.println("===== Notes =====");
-			notes.forEach(note -> System.out.println("\t\t{\n\t\t\tpitch: " + note.pitch + "\n\t\t\ttime: " + note.time + "\n\t\t}"));
+			notes.forEach(note -> System.out.println("\t\t{\n\t\t\tpitch: " + note.pitch + "\n\t\t\tpoints: " + note.points + "\n\t\t\ttime: " + note.time + "\n\t\t}"));
 			System.out.println("=====");
 		}
 		if (keycode == Input.Keys.ALT_RIGHT) {
@@ -84,9 +86,12 @@ public class NoteBoard {
 			Note note = song.getNotes()[i];
 			if (song.notePlayable(note) && !note.wasPlayed() && note.getPitch() == pitch) {
 				note.play();
+				scoreBoard.score(note);
 				System.out.println(song.getKeys()[note.getPitch()]);
 				return; // Only play one note per key press (solves the playing one late and one early note at the same time bug)
 			}
 		}
+		// If the execution reaches here then no notes were played
+		scoreBoard.addToScore(song.getFalseHitPoints());
 	}
 }

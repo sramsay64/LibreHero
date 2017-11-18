@@ -6,15 +6,17 @@ public class SongData {
 	private BarData[] bars;
 	private char keys[];
 	private float tempo;
+	private int falseHitPoints;
 
 	/**
 	 * @param notes Must be sorted by {@code Note.time}
 	 */
-	public SongData(NoteData[] notes, BarData[] bars, char[] keys, float tempo) {
+	public SongData(NoteData[] notes, BarData[] bars, char[] keys, float tempo, int falseHitPoints) {
 		this.notes = notes;
 		this.bars = bars;
 		this.keys = keys;
 		this.tempo = tempo;
+		this.falseHitPoints = falseHitPoints;
 	}
 
 	/**
@@ -53,16 +55,24 @@ public class SongData {
 		return tempo;
 	}
 
-	public static SongData fromArrays(int[] pitches, float[] times, char[] keys, float[] barTimes, float tempo) {
+	/**
+	 * @return The number of points lost each time  (number should be positive)
+	 */
+	public int getFalseHitPoints() {
+		return falseHitPoints;
+	}
+
+	@Deprecated
+	public static SongData fromArrays(int[] pitches, float[] times, char[] keys, float[] barTimes, float tempo, int falseHitPoints) {
 		NoteData[] notes = new NoteData[pitches.length];
 		for (int i = 0; i < pitches.length; i++) {
-			notes[i] = new NoteData(pitches[i], times[i]);
+			notes[i] = new NoteData(pitches[i], times[i], 10);
 		}
 		BarData[] bars = new BarData[barTimes.length];
 		for (int i = 0; i < bars.length; i++) {
 			bars[i] = new BarData(barTimes[i]);
 		}
-		return new SongData(notes, bars, keys, tempo);
+		return new SongData(notes, bars, keys, tempo, falseHitPoints);
 	}
 
 	public static class NoteData {
@@ -74,10 +84,15 @@ public class SongData {
 		 * Time in the song that the note appears. Measured in seconds
 		 */
 		public float time;
+		/**
+		 * The number of points scored by playing this note
+		 */
+		public int points;
 		
-		public NoteData(int pitch, float time) {
+		public NoteData(int pitch, float time, int points) {
 			this.pitch = pitch;
 			this.time = time;
+			this.points = points;
 		}
 
 		@Override

@@ -37,6 +37,10 @@ public class Song {
 		return songData.getTempo()/60;
 	}
 
+	public int getFalseHitPoints() {
+		return songData.getFalseHitPoints();
+	}
+
 	/**
 	 * @return Playback progress in seconds
 	 */
@@ -92,6 +96,10 @@ public class Song {
 
 		public float getTime() {
 			return data.time;
+		}
+
+		public int getPoints() {
+			return data.points;
 		}
 
 		public boolean isAlive() {

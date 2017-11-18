@@ -37,7 +37,7 @@ public class NoteBoardSprite {
 	private TextureRegion whiteDot;
 	private PolygonSprite[] boardSprites;
 
-	public NoteBoardSprite(int xPos, int yPos, int xSize, int ySize, float skewFactor, float density, NoteBoard board, Song song) {
+	public NoteBoardSprite(int xPos, int yPos, int xSize, int ySize, float skewFactor, float density, NoteBoard board, Song song) { // TODO Remove or fix skew factor
 		this.xPos = xPos;
 		this.yPos = yPos;
 		this.xSize = xSize;

@@ -38,7 +38,7 @@ public class SongFile {
 		
 		NoteData[] notes = new NoteData[notesDataElem.size];
 		for (int i = 0; i < notesDataElem.size; i++) {
-			notes[i] = new NoteData(notesDataElem.get(i).getInt("pitch"), notesDataElem.get(i).getFloat("time"));
+			notes[i] = new NoteData(notesDataElem.get(i).getInt("pitch"), notesDataElem.get(i).getFloat("time"), notesDataElem.get(i).getInt("points"));
 		}
 		
 		BarData[] bars = new BarData[barsDataElem.size];
@@ -53,8 +53,9 @@ public class SongFile {
 		}
 		
 		float tempo = songDataElem.getFloat("tempo");
+		int falseHitPoints = songDataElem.getInt("falseHitPoints");
 		
-		songData = new SongData(notes, bars, keys, tempo);
+		songData = new SongData(notes, bars, keys, tempo, falseHitPoints);
 		music = makeMusic(audioDataElem);
 		parsed = true;
 	}
