@@ -14,6 +14,7 @@ import com.kotcrab.vis.ui.widget.VisSlider;
 
 import com.openthid.librehero.GdxGame;
 import com.openthid.librehero.SongFile;
+import com.openthid.librehero.SongFile.InvalidSongFileException;
 import com.openthid.librehero.entities.NoteBoard;
 import com.openthid.librehero.entities.ScoreBoard;
 import com.openthid.librehero.entities.Song;
@@ -65,12 +66,15 @@ public class FieldScreen extends BaseScreen {
 		
 //		SongFile songFile = new SongFile(Gdx.files.absolute("/home/scott/git/LibreHero-Songs/Evan-LE-NY/La Chenille.json"));
 		SongFile songFile = new SongFile(Gdx.files.absolute("/home/scott/git/LibreHero-Songs/Brad-Sucks/Brad-Sucks-Dirtbag.json"));
-		songFile.parse();
 		
 		scoreBoard = new ScoreBoard(0, getHeight()-100, 300, 100);
 		engine.addEntity(scoreBoard.getEntity());
 		
-		song = songFile.makeSong();
+		try {
+			song = songFile.makeSong();
+		} catch (InvalidSongFileException e) {
+			e.printStackTrace();
+		}
 		noteBoard = new NoteBoard(400, 100, 500, 600, 1f, 2f, song, scoreBoard);
 		engine.addEntity(noteBoard.getEntity());
 	}

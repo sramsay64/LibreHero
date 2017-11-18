@@ -73,7 +73,7 @@ public class NoteBoard {
 			System.out.println("===== Times =====");
 			floats.forEach(System.out::println);
 			System.out.println("===== Notes =====");
-			notes.forEach(note -> System.out.println("\t\t{\n\t\t\tpitch: " + note.pitch + "\n\t\t\tpoints: " + note.points + "\n\t\t\ttime: " + note.time + "\n\t\t}"));
+			notes.forEach(note -> System.out.println("\t\t{\n\t\t\t\"pitch\": " + note.pitch + ",\n\t\t\t\"points\": " + note.points + ",\n\t\t\t\"time\": " + note.time + "\n\t\t},"));
 			System.out.println("=====");
 		}
 		if (keycode == Input.Keys.ALT_RIGHT) {
